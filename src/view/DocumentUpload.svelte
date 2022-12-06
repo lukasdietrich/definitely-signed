@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type {State} from 'src/view/viewstate';
+	import type {State} from 'src/lib/types';
 	import {createEventDispatcher} from 'svelte';
-	import FileUpload from 'src/lib/FileUpload.svelte';
+	import {FileUpload} from 'src/lib/components';
 
 	export let state: State;
 

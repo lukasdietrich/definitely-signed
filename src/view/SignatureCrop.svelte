@@ -1,31 +1,35 @@
 <script lang="ts">
-	import type {State, Dimensions} from 'src/view/viewstate';
+	import type {State, Dimensions} from 'src/lib/types';
 	import {createEventDispatcher} from 'svelte';
-	import Cropper from 'src/lib/Cropper.svelte';
-	import Button from 'src/lib/Button.svelte';
+	import {zeroDimensions} from 'src/lib/zero';
+	import {Cropper, Button} from 'src/lib/components';
 
 	export let state: State;
 
 	const dispatch = createEventDispatcher();
+	const signature = state.signatureOriginal;
 
-	let x: number = 0;
-	let y: number = 0;
-	let w: number = state.signatureBitmapOriginal.width;
-	let h: number = state.signatureBitmapOriginal.height;
+	let dimensions: Dimensions = {
+		...zeroDimensions(),
+		w: signature.width,
+		h: signature.height,
+	};
 
 	async function next() {
-		const dimensions: Dimensions = {x, y, w, h};
-		const cropped: ImageBitmap = await createImageBitmap(state.signatureBitmapOriginal, x, y, w, h);
+		const {x, y, w, h} = dimensions;
+		const cropped: ImageBitmap = await createImageBitmap(signature, x, y, w, h);
 
 		const nextState: State = {
 			...state,
-			signatureDimensionsCropped: dimensions,
-			signatureBitmapCropped: cropped,
+			signatureCropped: cropped,
 		};
 
 		dispatch('next', nextState);
 	}
 </script>
 
-<Cropper image={state.signatureBitmapOriginal} bind:x bind:y bind:w bind:h />
+<Cropper
+	image={signature}
+	bind:dimensions
+/>
 <Button on:click={next}>Next</Button>

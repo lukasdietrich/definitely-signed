@@ -1,12 +1,11 @@
 <script lang="ts">
-	import type {State} from 'src/view/viewstate';
+	import type {State, Size, Dimensions} from 'src/lib/types';
 	import type {PDFDocumentProxy, PDFPageProxy} from 'pdfjs-dist';
 	import {onMount} from 'svelte';
 	import {getDocument} from 'pdfjs-dist';
+	import {zeroSize, zeroDimensions} from 'src/lib/zero';
 	import {saveWithSignature} from 'src/lib/export';
-	import {DragContainer, DragBox} from 'src/lib/dragging';
-	import Button from 'src/lib/Button.svelte';
-	import DocumentPageRenderer from 'src/lib/DocumentPageRenderer.svelte';
+	import {Button, DocumentPageRenderer, DragContainer, DragBox} from 'src/lib/components';
 
 	export let state: State;
 
@@ -14,13 +13,12 @@
 	let page: PDFPageProxy;
 	let pageNumber = 1;
 
-	let containerWidth: number;
-	let containerHeight: number;
-
-	let signatureX: number;
-	let signatureY: number;
-	let signatureW = 100; 
-	let signatureH = signatureW / state.signatureDimensionsCropped.w * state.signatureDimensionsCropped.h;
+	let containerSize: Size = zeroSize();
+	let signatureDimensions: Dimensions = {
+		...zeroDimensions(),
+		w: 100,
+		h: 100 / state.signatureCropped.width * state.signatureCropped.height,
+	};
 
 	$: if(doc) {
 		loadPage(pageNumber);
@@ -32,13 +30,13 @@
 
 	async function save() {
 		const docOriginal = state.documentOriginal;
-		const signatureUrl = state.signatureBitmapCleaned;
+		const signatureUrl = state.signatureCleaned;
 		const viewport = page.getViewport({scale: 1});
 
-		const w = signatureW / containerWidth * viewport.width;
-		const h = signatureH / containerHeight * viewport.height;
-		const x = signatureX / containerWidth * viewport.width;
-		const y = viewport.height - (signatureY / containerHeight * viewport.height) - h;
+		const w = signatureDimensions.w / containerSize.w * viewport.width;
+		const h = signatureDimensions.h / containerSize.h * viewport.height;
+		const x = signatureDimensions.x / containerSize.w * viewport.width;
+		const y = viewport.height - (signatureDimensions.y / containerSize.h * viewport.height) - h;
 
 		const exportUrl = await saveWithSignature(docOriginal, signatureUrl, x, y, w, h);
 		window.open(exportUrl, '_blank');
@@ -63,19 +61,13 @@
 {/if}
 
 <div class="border">
-	<DragContainer bind:width={containerWidth} bind:height={containerHeight}>
+	<DragContainer bind:size={containerSize}>
 		{#if doc && page}
 			<DocumentPageRenderer {page} />
 		{/if}
 
-		<DragBox
-			keepRatio={true}
-			bind:left={signatureX}
-			bind:top={signatureY}
-			bind:width={signatureW}
-			bind:height={signatureH}
-		>
-			<img class="w-full" alt="Signature" src={state.signatureBitmapCleaned} />
+		<DragBox keepRatio={true} bind:dimensions={signatureDimensions}>
+			<img class="w-full" alt="Signature" src={state.signatureCleaned} />
 		</DragBox>
 	</DragContainer>
 </div>

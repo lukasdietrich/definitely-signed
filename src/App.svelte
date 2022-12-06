@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {State} from 'src/view/viewstate';
+	import type {State} from 'src/lib/types';
 	import SignatureUpload from 'src/view/SignatureUpload.svelte';
 	import SignatureCrop from 'src/view/SignatureCrop.svelte';
 	import SignatureClean from 'src/view/SignatureClean.svelte';

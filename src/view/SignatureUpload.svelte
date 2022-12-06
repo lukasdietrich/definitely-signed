@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type {State} from 'src/view/viewstate';
+	import type {State} from 'src/lib/types';
 	import {createEventDispatcher} from 'svelte';
-	import FileUpload from 'src/lib/FileUpload.svelte';
+	import {FileUpload} from 'src/lib/components';
 
 	const dispatch = createEventDispatcher();
 
 	async function handleSelection({detail}: CustomEvent<File>) {
 		const state: State = {
-			signatureBitmapOriginal: await createImageBitmap(detail),
+			signatureOriginal: await createImageBitmap(detail),
 		};
 
 		dispatch('next', state);

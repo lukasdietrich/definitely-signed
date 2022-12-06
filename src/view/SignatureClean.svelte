@@ -1,52 +1,18 @@
 <script lang="ts">
-	import type {State, Dimensions} from 'src/view/viewstate';
+	import type {State, Dimensions} from 'src/lib/types';
 	import {onMount, createEventDispatcher} from 'svelte';
-	import Button from 'src/lib/Button.svelte';
+	import {cleanImage} from 'src/lib/image';
+	import {Button} from 'src/lib/components';
 
 	export let state: State;
 
 	const dispatch = createEventDispatcher();
+	const image = state.signatureCropped;
 
 	let canvasOriginal: HTMLCanvasElement;
 	let canvasCleaned: HTMLCanvasElement;
 
-	let image = state.signatureBitmapCropped;
 	let threshold = 125;
-
-	function keepPixel(r: number, g: number, b: number, threshold: number): boolean {
-		const sum = r + g + b;
-		const average = sum / 3;
-
-		return average < threshold;
-	}
-
-	function filterPixels(pixels: Uint8ClampedArray, threshold: number): Uint8ClampedArray {
-		const f = new Uint8ClampedArray(pixels.length);
-
-		for (let i = 0; i < pixels.length; i += 4) {
-			const r = pixels[i + 0];
-			const g = pixels[i + 1];
-			const b = pixels[i + 2];
-			const a = pixels[i + 3];
-
-			if (keepPixel(r, g, b, threshold)) {
-				f[i + 0] = r;
-				f[i + 1] = g;
-				f[i + 2] = b;
-				f[i + 3] = a;
-			} else {
-				f[i + 3] = 0;
-			}
-		}
-
-		return f;
-	}
-
-	function filterImageData(image: ImageData, threshold: number): ImageData {
-		const pixels = filterPixels(image.data, threshold);
-		return new ImageData(pixels, image.width, image.height);
-	}
-
 
 	$: if (canvasOriginal && canvasCleaned) {
 		const ctxOriginal = canvasOriginal.getContext('2d');
@@ -56,7 +22,7 @@
 		const height = ctxOriginal.canvas.height;
 
 		const dataOriginal = ctxOriginal.getImageData(0, 0, width, height);
-		const dataCleaned = filterImageData(dataOriginal, threshold);
+		const dataCleaned = cleanImage(dataOriginal, threshold);
 
 		ctxCleaned.putImageData(dataCleaned, 0, 0);
 	}
@@ -66,7 +32,7 @@
 
 		const nextState: State = {
 			...state,
-			signatureBitmapCleaned: cleanedImage,
+			signatureCleaned: cleanedImage,
 		};
 
 		dispatch('next', nextState);
