@@ -5,7 +5,13 @@
 	import {getDocument} from 'pdfjs-dist';
 	import {zeroSize, zeroDimensions} from 'src/lib/zero';
 	import {saveWithSignature} from 'src/lib/export';
-	import {Button, DocumentPageRenderer, DragContainer, DragBox} from 'src/lib/components';
+	import {
+		Button,
+		DocumentPageRenderer,
+		DragContainer,
+		DragBox,
+		Pagination,
+	} from 'src/lib/components';
 
 	export let state: State;
 
@@ -37,8 +43,9 @@
 		const h = signatureDimensions.h / containerSize.h * viewport.height;
 		const x = signatureDimensions.x / containerSize.w * viewport.width;
 		const y = viewport.height - (signatureDimensions.y / containerSize.h * viewport.height) - h;
+		const dimensions = { x, y, w, h };
 
-		const exportUrl = await saveWithSignature(docOriginal, signatureUrl, x, y, w, h);
+		const exportUrl = await saveWithSignature(docOriginal, signatureUrl, pageNumber, dimensions);
 		window.open(exportUrl, '_blank');
 	}
 
@@ -48,15 +55,8 @@
 </script>
 
 {#if doc}
-	<div class="mb-5 flex space-x-3">
-		<span>Page</span>
-		<input
-			class="w-18 px-2 border rounded"
-			type="number"
-			min="1"
-			max={doc.numPages}
-			bind:value={pageNumber}
-		/>
+	<div class="mb-5">
+		<Pagination min={1} max={doc.numPages} bind:value={pageNumber} />
 	</div>
 {/if}
 

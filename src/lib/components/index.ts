@@ -4,6 +4,7 @@ import DocumentPageRenderer from 'src/lib/components/DocumentPageRenderer.svelte
 import FileUpload from 'src/lib/components/FileUpload.svelte';
 import DragContainer from 'src/lib/components/DragContainer.svelte';
 import DragBox from 'src/lib/components/DragBox.svelte';
+import Pagination from 'src/lib/components/Pagination.svelte';
 
 export {
 	Button,
@@ -12,4 +13,5 @@ export {
 	FileUpload,
 	DragContainer,
 	DragBox,
+	Pagination,
 };

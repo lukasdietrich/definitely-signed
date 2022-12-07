@@ -1,10 +1,12 @@
+import type {Dimensions} from 'src/lib/types';
 import {PDFDocument} from 'pdf-lib';
 
-export async function saveWithSignature(pdfOriginal: ArrayBuffer, signatureUrl: string, x: number, y: number, w: number, h: number) {
+export async function saveWithSignature(pdfOriginal: ArrayBuffer, signatureUrl: string, pageNumber: number, dimension: Dimensions) {
 	const doc = await PDFDocument.load(pdfOriginal);
-	const page = doc.getPage(0);
+	const page = doc.getPage(pageNumber - 1);
 	const signature = await doc.embedPng(signatureUrl);
 	
+	const {x, y, w, h} = dimension;
 	page.drawImage(signature, {
 		x,
 		y,
