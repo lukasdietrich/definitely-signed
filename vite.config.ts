@@ -4,7 +4,7 @@ import {svelte} from '@sveltejs/vite-plugin-svelte';
 import windicss from 'vite-plugin-windicss';
 
 export default defineConfig({
-	base: '/definitely-signed',
+	base: '/definitely-signed/',
 
 	build: {
 		chunkSizeWarningLimit: 2048,
