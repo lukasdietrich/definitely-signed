@@ -17,4 +17,6 @@
 	}
 </script>
 
-<FileUpload accept=".pdf" on:file={handleSelection} />
+<FileUpload accept=".pdf" on:file={handleSelection}>
+	upload document (*.pdf)
+</FileUpload>

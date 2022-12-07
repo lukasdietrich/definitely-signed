@@ -14,4 +14,6 @@
 	}
 </script>
 
-<FileUpload accept="image/*" capture="environment" on:file={handleSelection} />
+<FileUpload accept="image/*" capture="environment" on:file={handleSelection}>
+	upload handwritten signature (*.png, *.jpeg)
+</FileUpload>

@@ -18,6 +18,7 @@ export default defineConfig({
 					cursor: {
 						'move': 'move',
 						'resize': 'se-resize',
+						'pointer': 'pointer',
 					},
 				},
 			},
