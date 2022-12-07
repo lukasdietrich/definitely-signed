@@ -1,8 +1,6 @@
 <script lang="ts">
 	import type {PDFPageProxy} from 'pdfjs-dist';
 
-	export let w: number = 0;
-	export let h: number = 0;
 	export let page: PDFPageProxy;
 
 	let canvas: HTMLCanvasElement;

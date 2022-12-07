@@ -4,6 +4,12 @@ import {svelte} from '@sveltejs/vite-plugin-svelte';
 import windicss from 'vite-plugin-windicss';
 
 export default defineConfig({
+	base: '/definitely-signed',
+
+	build: {
+		chunkSizeWarningLimit: 2048,
+	},
+
 	resolve: {
 		alias: {
 			src: fileURLToPath(new URL('./src', import.meta.url)),
